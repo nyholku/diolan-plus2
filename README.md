@@ -3,7 +3,7 @@
 Dialoan bootloader is an excellent bootloader that allows updating the firmware of Microchip PIC18 based device via USB.
 
 
-Diolan-plus2 is the  Diolan bootloader for PIC18 family of devices with all the features intact modified to use the standard (non extended aka legacy) instructions set and still fit in the 2 kB bootblock.
+Diolan-plus2 is the  Diolan bootloader for PIC18 family of devices modified, with all the original features intact,  to use the standard (non extended aka legacy) instructions set and still fit in the 2 kB bootblock.
 
 The code was originally ported to PIC18F450 and modified to use the standard instruction set in order to be compatible with the [SDCC](http://sdcc.sourceforge.net) compiler and to support my [EasyCNC Project](http://www.sparetimelabs.com/eazycnc/welcome/welcome.php).
 
@@ -17,7 +17,7 @@ and get the original code from here:
 
 [https://diolan.com/pic-bootloader](https://diolan.com/pic-bootloader)
 
-There are lots of bootloaders available for PIC USB devices; what sets Dialan apart is that it is coded in assembly language to fit in the 2kB bootblock of many PIC devices and that it supports encrypted firmware updates which is mandatory for many commercial projects.
+There are lots of bootloaders available for PIC USB devices; what sets Diolan apart is that it is coded in assembly language to fit in the 2kB bootblock of many PIC devices and that it supports encrypted firmware updates which is mandatory for many commercial projects.
 
 However it has one overriding problem -- it is written to take advantage of the Extended Instruction Set (EIS) available with PIC18 family of devices. This creates a problem because the device always boots up in either 'legacy' or EIS mode and that cannot be changed on the fly. If the bootloader starts in EIS then the 'application' code also needs to be written to work with it. And that is a problem, since *no supported C-compilers for EIS are available* and the EIS seems to be abandoned by Microchip.
 
