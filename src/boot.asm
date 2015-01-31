@@ -54,9 +54,9 @@
 	CONFIG  ICPRT = OFF			; ICP
 	CONFIG  XINST = OFF			; Ext CPU Instruction Set
 	CONFIG	DEBUG = OFF			; Background Debugging
-	CONFIG  CP0 = OFF			; Code Protect
-	CONFIG  CP1 = OFF
-	CONFIG  CP2 = OFF
+	CONFIG  CP0 = ON			; Code Protect
+	CONFIG  CP1 = ON
+	CONFIG  CP2 = ON
 	CONFIG  CPB = ON   			; Boot Sect Code Protect
 	CONFIG  CPD = OFF  			; EEPROM Data Protect
 	CONFIG  WRT0 = OFF 			; Table Write Protect
