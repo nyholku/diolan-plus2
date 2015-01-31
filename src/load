@@ -1,0 +1,1 @@
+pk2cmd -fbootloader.hex -pPIC18f4550 /m /e /j /r
