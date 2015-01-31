@@ -1,9 +1,9 @@
 ## diolan-plus2 -- Diolan bootloader with standard instruction set
 
-Dialoan bootloader is an excellent bootloader that allows updating the firmware of Microchip PIC18 based device via USB.
+Dialoan bootloader is an excellent bootloader that allows updating the firmware of Microchip PIC18 -family devices via USB.
 
 
-Diolan-plus2 is the  Diolan bootloader for PIC18 family of devices modified, with all the original features intact,  to use the standard (non extended aka legacy) instructions set and still fit in the 2 kB bootblock.
+Diolan-plus2 is the  Diolan bootloader modified, with all the original features intact,  to use the standard (non extended aka legacy) instructions set and still fit in the 2 kB bootblock.
 
 The code was originally ported to PIC18F450 and modified to use the standard instruction set in order to be compatible with the [SDCC](http://sdcc.sourceforge.net) compiler and to support my [EasyCNC Project](http://www.sparetimelabs.com/eazycnc/welcome/welcome.php).
 
