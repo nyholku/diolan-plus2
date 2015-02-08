@@ -1,9 +1,9 @@
-VID		= 0x1D50
-PID		= 0x6020
-XTEA_KEY	= '0x57,0x4A,0xB5,0x8C,0xD7,0x20,0xF4,0x26,0x91,0x7B,0x77,0xEA,0x8C,0x40,0x16,0x9C'
+VID		= 0x0000
+PID		= 0x0000
+XTEA_KEY	= '"0123456789ABCDEF"'
 
 PROJECT		= bootloader
-PROCESSOR	= 18f4550
+PROCESSOR	= 18f45k50
 	
 SRCS		= boot.asm boot_asm.asm usb.asm usb_desc.asm vectors.asm xtea.asm
 INCS		= boot_if.inc boot.inc io_cfg.inc usb_defs.inc usb_desc.inc usb.inc 

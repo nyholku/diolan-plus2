@@ -167,6 +167,9 @@ write_code_loop
 ; NOTES : Will leave TBLPTRU=0
 ;-----------------------------------------------------------------------------
 read_id
+
+#ifndef __18F45K50
+
 	rcall	rdwr_id_init
 	lfsr	FSR0, boot_rep + CODE_OFFS	; FSR0=&boot_rep.data	
 	; while( cntr-- )
@@ -175,7 +178,7 @@ read_id_loop
 	movff	TABLAT, POSTINC0
 	decfsz	cntr
 	bra	read_id_loop
-	
+#endif __18F45K50
 rdwr_id_return
 	clrf	TBLPTRU                  
 #if ENCODE_ID
@@ -195,6 +198,9 @@ rdwr_id_return
 ; NOTES : Will leave TBLPTRU=0
 ;-----------------------------------------------------------------------------
 write_id
+
+#ifndef __18F45K50
+
 #if ENCODE_ID
 	; Decode
 	;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -216,6 +222,7 @@ write_id_loop
 	
 	rcall	flash_write
 	bra	rdwr_id_return
+#endif __18F45K50
 	
 rdwr_id_init
 	movlw	0x20
