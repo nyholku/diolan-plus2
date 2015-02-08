@@ -3,7 +3,7 @@ PID		= 0x0000
 XTEA_KEY	= '"0123456789ABCDEF"'
 
 PROJECT		= bootloader
-PROCESSOR	= 18f4550
+PROCESSOR	= 18f45k50
 	
 SRCS		= boot.asm boot_asm.asm usb.asm usb_desc.asm vectors.asm xtea.asm
 INCS		= boot_if.inc boot.inc io_cfg.inc usb_defs.inc usb_desc.inc usb.inc 

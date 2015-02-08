@@ -27,28 +27,54 @@
 ;-----------------------------------------------------------------------------
 ; Configuration Bits 
 ;-----------------------------------------------------------------------------
+
+
+#ifdef __18F45K50
+#define USBIF_PIR PIR3
+#define USBIE_PIE PIE3
+#define XXX HUU HAA
+	CONFIG	CFGPLLEN = ON
+;	CONFIG	FOSC = HSH 				;INTOSCIO
+	CONFIG	FOSC = INTOSCIO
+	CONFIG	PLLSEL = PLL3X
+	CONFIG	CPUDIV = NOCLKDIV
+	CONFIG	LS48MHZ = SYS48X8
+	CONFIG	CCP2MX = RC1
+	CONFIG	WDTEN = OFF
+	CONFIG	T3CMX = RC0
+	CONFIG	SDOMX = RB3
+	CONFIG	BOREN = SBORDIS
+	CONFIG	PCLKEN = ON
+	CONFIG	FCMEN = ON
+#endif
+
+#ifdef __18F4550
+#define USBIF_PIR PIR2
+#define USBIE_PIE PIE2
 #if CPU_5V_HS
 ;	CONFIG	PLLDIV = 4			; OSC/4 for 16MHz
 	CONFIG	PLLDIV = 1			; OSC/1 for 4 MHz XTAL
-	CONFIG  CPUDIV = OSC1_PLL2		; CPU_clk = PLL/2
+	CONFIG  CPUDIV = OSC1_PLL2	; CPU_clk = PLL/2
 	CONFIG 	USBDIV = 2			; USB_clk = PLL/2
-	CONFIG 	FOSC = HSPLL_HS			; HS osc PLL	
+	CONFIG 	FOSC = HSPLL_HS		; HS osc PLL
 #else
 	CONFIG	PLLDIV = 4			; OSC/4 for 16MHz
-	CONFIG  CPUDIV = OSC1_PLL2		; CPU_clk = Fosc
+	CONFIG  CPUDIV = OSC1_PLL2	; CPU_clk = Fosc
 	CONFIG 	USBDIV = 2			; USB_clk = PLL/2
 	CONFIG 	FOSC = HS			; HS osc
 #endif
-	CONFIG  FCMEN = ON			; Fail Safe Clock Monitor
-	CONFIG  IESO = OFF			; Int/Ext switchover mode
+	CONFIG  WDT = OFF			; WatchDog Timer
+	CONFIG  LPT1OSC = OFF		; Low Power OSC
+	CONFIG  CCP2MX = ON			; CCP2 Mux RC1
 	CONFIG  PWRT = ON			; PowerUp Timer
 	CONFIG  BOR = OFF			; Brown Out
 	CONFIG  VREGEN = ON			; Int Voltage Regulator
-	CONFIG  WDT = OFF			; WatchDog Timer
+	CONFIG  FCMEN = ON			; Fail Safe Clock Monitor
+#endif
+
+	CONFIG  IESO = OFF			; Int/Ext switchover mode
 	CONFIG  MCLRE = ON			; MCLR
-	CONFIG  LPT1OSC = OFF			; Low Power OSC
 	CONFIG  PBADEN = ON			; PORTB<4:0> A/D
-	CONFIG  CCP2MX = ON			; CCP2 Mux RC1
 	CONFIG  STVREN = ON			; Stack Overflow Reset
 	CONFIG  LVP = OFF			; Low Voltage Programming
 	CONFIG  ICPRT = OFF			; ICP
@@ -129,6 +155,24 @@ main
 	UD_INIT
 	UD_TX	'X'
 
+#ifdef __18F45K50
+	movlw	0x80	; 3X PLL ratio mode selected
+	movwf	OSCTUNE
+;
+	movlw	0x70	; Switch to 16MHz HFINTOSC
+	movwf	OSCCON
+;
+	movlw	0x10	; Enable PLL, SOSC, PRI OSC drivers turned off
+	movwf	OSCCON2
+;
+wait_PLLRDY_loop
+	btfss	OSCCON2,PLLRDY
+	bra		wait_PLLRDY_loop
+;
+	movlw	0x90	; Enable active clock tuning for USB operation
+	movwf	ACTCON
+#endif
+
 	; Decide what to run bootloader or application
 #if USE_EEPROM_MARK
 	; Check EEPROM mark
@@ -142,13 +186,24 @@ main
 #endif
 	; Check bootloader enable jumper
 #ifdef USE_JP_BOOTLOADER_EN
+
+#ifdef __18F45K50
+	movlb	0xF
+;	clrf	ANSELC		; in case JP_BOOTLOADER is JP_BOOTLOADER_PORT specifies port C
+	movlb	0xF
+	bcf		ANSELC,7
+	movlb	0x0
+#endif
 	setf	JP_BOOTLOADER_TRIS
 	btfsc	JP_BOOTLOADER_PORT, JP_BOOTLOADER_PIN
 	goto	APP_RESET_VECTOR	; Run Application FW
+;;;;;	goto	blink	; Run Application FW
 #endif
 	; Run bootloader
 	bra	bootloader
 	reset
+;
+
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ;!!!    WARNING NEVER RETURN IN NORMAL WAY   !!!
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -235,10 +290,10 @@ usb_state_machine_idleif
 	bsf	UCON, SUSPND	; Put USB module in power conserve
 				; mode, SIE clock inactive
         ; Now, go into power saving
-        bcf	PIR2, USBIF	; Clear flag
-        bsf	PIE2, USBIE	; Set wakeup source
+        bcf	USBIF_PIR, USBIF	; Clear flag
+        bsf	USBIE_PIE, USBIE	; Set wakeup source
 	sleep
-        bcf	PIE2, USBIE
+        bcf	USBIE_PIE, USBIE
 usb_state_machine_idleif_end
 	; SOF Flag
 usb_state_machine_sof

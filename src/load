@@ -1,1 +1,2 @@
-pk2cmd -fbootloader.hex -pPIC18f4550 /m /e /j /r
+#pk2cmd -fbootloader.hex -pPIC18f4550 /m /e /j /r
+./pk2cmd -b. -fbootloader.hex -pPIC18lf45k50 /m /e /j /r
