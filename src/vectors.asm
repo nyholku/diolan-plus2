@@ -15,9 +15,17 @@
 ;;  You should have received a copy of the GNU General Public License       ;;
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Copyright (c) 2015 Kustaa Nyholm / SpareTimeLabs
+; - modified NOT to use Extended Instruction Set (for compatibility with SDCC)
+; - ported to PIC18F4550
+; - ported to PIC18F45K50
+; - extensively optimized to still fit in the 2 kB boot block
+;
+;-----------------------------------------------------------------------------
 ; Device Reset Vectors
 ;-----------------------------------------------------------------------------
-	#include "P18F4455.INC"
+	#include PROCESSOR_HEADER
 	#include "boot.inc"
 	#include "io_cfg.inc"
 ;-----------------------------------------------------------------------------
@@ -40,14 +48,19 @@ VECTORS		CODE	0x0000
 	goto	APP_HIGH_INTERRUPT_VECTOR
 ;-----------------------------------------------------------------------------
 pre_main
-	; All I/O to Digital mode
-	movlw	0x0F
-	movwf	ADCON1
+	; JP_BOOTLOADER_PIN to digital mode
+;
+; Here is four words free if processors is ot 18F45K50
+;
+#ifdef __18F45K50
+	movlw	0x80	; 3X PLL ratio mode
+	movwf	OSCTUNE
+;
+	movlw	0x70	; Switch to 16MHz HFINTOSC
+	movwf	OSCCON
+#endif
+;
 	bra		main
-;-----------------------------------------------------------------------------
-; Here is 4 bytes (2 program words) free
-; in address range from 0x012 to 0x015 inclusive.
-; Can be used for something short for size optimization.
 ;-----------------------------------------------------------------------------
 ;--- BOOTLOADER External Entry Point                         
 	org	0x0016

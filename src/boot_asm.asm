@@ -15,6 +15,12 @@
 ;;  You should have received a copy of the GNU General Public License       ;;
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Copyright (c) 2015 Kustaa Nyholm / SpareTimeLabs
+; - modified NOT to use Extended Instruction Set (for compatibility with SDCC)
+; - extensively optimized to still fit in the 2 kB boot block
+;-----------------------------------------------------------------------------
+;
 ; Flash Reading / Writing
 ;-----------------------------------------------------------------------------
 	#include PROCESSOR_HEADER
@@ -167,9 +173,6 @@ write_code_loop
 ; NOTES : Will leave TBLPTRU=0
 ;-----------------------------------------------------------------------------
 read_id
-
-#ifndef __18F45K50
-
 	rcall	rdwr_id_init
 	lfsr	FSR0, boot_rep + CODE_OFFS	; FSR0=&boot_rep.data	
 	; while( cntr-- )
@@ -178,13 +181,12 @@ read_id_loop
 	movff	TABLAT, POSTINC0
 	decfsz	cntr
 	bra	read_id_loop
-#endif __18F45K50
 rdwr_id_return
 	clrf	TBLPTRU                  
 #if ENCODE_ID
 	; Encode and return
 	;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	goto	xtea_encode
+	bra		xtea_encode
 #else
 	return
 #endif
@@ -198,13 +200,10 @@ rdwr_id_return
 ; NOTES : Will leave TBLPTRU=0
 ;-----------------------------------------------------------------------------
 write_id
-
-#ifndef __18F45K50
-
 #if ENCODE_ID
 	; Decode
 	;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	call	xtea_decode
+	rcall	xtea_decode
 #endif
 	rcall   rdwr_id_init
 	lfsr    FSR0, boot_cmd + CODE_OFFS	; FSR0=&boot_cmd.data
@@ -222,7 +221,6 @@ write_id_loop
 	
 	rcall	flash_write
 	bra	rdwr_id_return
-#endif __18F45K50
 	
 rdwr_id_init
 	movlw	0x20
@@ -277,7 +275,7 @@ read_eeprom_loop
 #if ENCODE_EEPROM
 	; Encode and return
 	;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	goto	xtea_encode
+	bra	xtea_encode
 #else
 	return
 #endif
@@ -360,12 +358,28 @@ return_hid_process_cmd
 ; NOTES : 
 ;-----------------------------------------------------------------------------
 get_fw_version
+#if FW_VER_MAJOR == FW_VER_SUB_MINOR && FW_VER_MAJOR != FW_VER_MINOR
+#if FW_VER_MAJOR != 0
 	movlw	FW_VER_MAJOR
-	movwf	boot_rep + VER_MAJOR_OFFS 
-	movlw	FW_VER_MINOR
-	movwf	boot_rep + VER_MINOR_OFFS 
-	movlw	FW_VER_SUB_MINOR
+#endif
+	movwf	boot_rep + VER_MAJOR_OFFS
 	movwf	boot_rep + VER_SMINOR_OFFS
+	movlw	FW_VER_MINOR
+	movwf	boot_rep + VER_MINOR_OFFS
+#else
+#if FW_VER_MAJOR != 0
+	movlw	FW_VER_MAJOR
+#endif
+	movwf	boot_rep + VER_MAJOR_OFFS
+#if FW_VER_MINOR != FW_VER_MAJOR
+	movlw	FW_VER_MINOR
+#endif
+	movwf	boot_rep + VER_MINOR_OFFS 
+#if FW_VER_SUB_MINOR != FW_VER_MINOR
+	movlw	FW_VER_SUB_MINOR
+#endif
+	movwf	boot_rep + VER_SMINOR_OFFS
+#endif
 	return
 
 ;-----------------------------------------------------------------------------

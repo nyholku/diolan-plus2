@@ -16,7 +16,58 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 
+Release Notes for 'diolan-plus2' fork 
 
+Copyright (c) 2015 Kustaa Nyholm / SpareTimeLabs
+ 
+The code has been extensively optimized to still fit the 2 kB boot block
+without sacrificing features. However there are some features, like
+crypted access to EEPROM, that are not enabled and that will,
+if enabled, cause the code to bloat and not fit in the code memory.
+
+Notes about the version numbers.
+
+Version numbers are specific to the fork so you cannot identify the
+code based on the version number only. This is ok because every
+use of the bootloader should have their own USB PID/VID anyway and
+you should use those together with the version number to identify
+the actual bootloader version and code base.
+
+The first 'diolan-plus2' release used version number 0.2.2 by mistake,
+the second release re-started the numbering from 0.0.0.
+
+Diolan originally specified three part (major.minor.subminor style)
+version numbering. This fork still supports that. However it is
+wasteful as the code space is at premium. To optimize space this
+code (starting from version 0.0.0) takes advantage of redundancy in
+the version number i.e version numbers with major == 0 and 
+minor == subminor) consume less code space. Changing the version
+number may cause the code not to fit in the memory.
+
+
+0.0.0 -- 14.2.2015
+-----
+
+ - ported to PIC18F45K50
+ - bootloader jumper detection extended to support any I/O pin
+ - extensively optimized to still fit in the 2 kB boot block
+
+
+0.2.2 -- 31.1.2015
+_____
+
+Initial release of the 'diolan-plus2' fork for PIC18F4550 
+
+ - modified NOT to use Extended Instruction Set (for compatibility with SDCC)
+ - ported to PIC18F4550
+ - extensively optimized to still fit in the 2 kB boot block
+
+-----------------------------------------------------------------------------
+;
+; Below is kept for historical reasons, apparently it is is missing notes
+; for at least version 0.2.2 (and presumably others) on which the
+; this fork (diolan-plus2) is based
+;
 0.1.0
 -----
 - Rewriten in assembler.

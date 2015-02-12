@@ -28,10 +28,43 @@
 #endif
 ;-----------------------------------------------------------------------------
 ; Jumpers
+;
+; Note! Ensure that the jumper *is* in digital input mode, see vectors.asm/pre_main
+;
 #define USE_JP_BOOTLOADER_EN	1	; Undef/comment if you not want to use FW Jumper
+;
 #ifdef	USE_JP_BOOTLOADER_EN
+;
+#define JP_BOOTLOADER_ANSEL	ANSELC
 #define JP_BOOTLOADER_TRIS	TRISC
 #define JP_BOOTLOADER_PORT	PORTC
 #define JP_BOOTLOADER_PIN	7	
+;
+; This macro is used to test (and skip) if the jumper is 'set'
+; - modify to configure the port/pin as digital input for your PIC
+; - modify to suit polarity (jumper 'set' == 1 or 0)
+;
+JP_BOOTLOADER_SKIP_IF_SET	macro
+
+#ifdef __18F4550
+#if JP_BOOTLOADER_PORT==PORTD
+	movlw	0x0F		; wholesale PORTD all digital
+	movwf	ADCON1
+#else
+	error	"Bad or unimplemented JP_BOOTLOADER_PORT definition"
+#endif 
+#endif
+
+#ifdef __18F45K50
+	movlb	0xF		
+	bcf		JP_BOOTLOADER_ANSEL,JP_BOOTLOADER_PIN	
+	movlb	0x0	
+;	
+	bsf		JP_BOOTLOADER_TRIS, JP_BOOTLOADER_PIN
+	btfsc	JP_BOOTLOADER_PORT, JP_BOOTLOADER_PIN
+#endif
+;
+	endm
+
 #endif
 ;-----------------------------------------------------------------------------

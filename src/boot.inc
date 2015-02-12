@@ -19,8 +19,8 @@
 ;-----------------------------------------------------------------------------
 ; Bootloader Version
 #define FW_VER_MAJOR		0
-#define FW_VER_MINOR		2
-#define FW_VER_SUB_MINOR	2
+#define FW_VER_MINOR		0
+#define FW_VER_SUB_MINOR	0
 #define FW_VER_CODE		((FW_VER_MAJOR << 8) | (FW_VER_MINOR << 4) | (FW_VER_SUB_MINOR))
 ;-----------------------------------------------------------------------------
 ; Application FW RESET and INTERRUPT VECTORS
