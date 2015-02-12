@@ -139,7 +139,7 @@ USB_LANG_DESC_end
 USB_MFG_DESC
 USB_MFG_DESC_bLength	db	(USB_MFG_DESC_end - USB_MFG_DESC)	; Size
 USB_MFG_DESC_bDscType	db	DSC_STR	; Descriptor type = string
-			dw	'D','i','o','l','a','n';,'.','c','o','m'
+			dw	'F','o','o','B','a','r'	; FooBar
 USB_MFG_DESC_end
 ;-----------------------------------------------------------------------------
 ; Product string Descriptor

@@ -15,6 +15,14 @@
 ;;  You should have received a copy of the GNU General Public License       ;;
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Copyright (c) 2015 Kustaa Nyholm / SpareTimeLabs
+; - modified NOT to use Extended Instruction Set (for compatibility with SDCC)
+; - ported to PIC18F4550
+; - ported to PIC18F45K50
+; - extensively optimized to still fit in the 2 kB boot block
+;
+;-----------------------------------------------------------------------------
 ; BootLoader Main code
 ;-----------------------------------------------------------------------------
 	#include PROCESSOR_HEADER
@@ -156,11 +164,8 @@ main
 	UD_TX	'X'
 
 #ifdef __18F45K50
-	movlw	0x80	; 3X PLL ratio mode selected
-	movwf	OSCTUNE
 ;
-	movlw	0x70	; Switch to 16MHz HFINTOSC
-	movwf	OSCCON
+; Note: some of the clock initialization happens in vectors.asm/pre_main
 ;
 	movlw	0x10	; Enable PLL, SOSC, PRI OSC drivers turned off
 	movwf	OSCCON2
@@ -171,6 +176,7 @@ wait_PLLRDY_loop
 ;
 	movlw	0x90	; Enable active clock tuning for USB operation
 	movwf	ACTCON
+;
 #endif
 
 	; Decide what to run bootloader or application
@@ -186,24 +192,12 @@ wait_PLLRDY_loop
 #endif
 	; Check bootloader enable jumper
 #ifdef USE_JP_BOOTLOADER_EN
-
-#ifdef __18F45K50
-	movlb	0xF
-;	clrf	ANSELC		; in case JP_BOOTLOADER is JP_BOOTLOADER_PORT specifies port C
-	movlb	0xF
-	bcf		ANSELC,7
-	movlb	0x0
-#endif
-	setf	JP_BOOTLOADER_TRIS
-	btfsc	JP_BOOTLOADER_PORT, JP_BOOTLOADER_PIN
+	JP_BOOTLOADER_SKIP_IF_SET
 	goto	APP_RESET_VECTOR	; Run Application FW
-;;;;;	goto	blink	; Run Application FW
 #endif
-	; Run bootloader
-	bra	bootloader
-	reset
 ;
-
+; Run bootloader (falls through)
+;
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ;!!!    WARNING NEVER RETURN IN NORMAL WAY   !!!
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -236,7 +230,7 @@ bootloader_loop
 	rcall	hid_process_cmd
 	rcall	hid_send_report
 	bra	bootloader_loop
-	reset
+;
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ;!!!    WARNING NEVER RETURN IN NORMAL WAY   !!!
 ;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

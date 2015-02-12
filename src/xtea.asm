@@ -15,6 +15,12 @@
 ;;  You should have received a copy of the GNU General Public License       ;;
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Copyright (c) 2015 Kustaa Nyholm / SpareTimeLabs
+; - modified NOT to use Extended Instruction Set (for compatibility with SDCC)
+; - extensively optimized to still fit in the 2 kB boot block
+;
+;-----------------------------------------------------------------------------
 ; XTEA Encoding / Decoding
 ;-----------------------------------------------------------------------------
 	#include PROCESSOR_HEADER
@@ -250,14 +256,12 @@ load_shift
 	movff	POSTINC2, tmp2 + 3
 	rcall	subfsr_FSR2_4
 	; tmp1 <<= 4
-	rcall	tmp1_shft_l_1
-	rcall	tmp1_shft_l_1
-	rcall	tmp1_shft_l_1
-	rcall	tmp1_shft_l_1
+	rcall	tmp1_shft_l_2
+	rcall	tmp1_shft_l_2
 	; tmp2 >>= 5
+	rcall	tmp2_shft_r_2
 	rcall	tmp2_shft_r_1
-	rcall	tmp2_shft_r_1
-	rcall	tmp2_shft_r_1
+tmp2_shft_r_2
 	rcall	tmp2_shft_r_1
 tmp2_shft_r_1
 	bcf	STATUS,C        ; Carry=0
@@ -267,6 +271,8 @@ tmp2_shft_r_1
 	rrcf	tmp2 + 0
 	return
 ;
+tmp1_shft_l_2
+	rcall   tmp1_shft_l_1
 tmp1_shft_l_1
 	bcf	STATUS,C        ; Carry=0
 	rlcf	tmp1 + 0
