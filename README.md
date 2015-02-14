@@ -36,7 +36,8 @@ That (diolan plus) is an excellent port of this project that works with most PIC
 
 This project, diolan-plus2, seeks to provide the best of both i.e. it provides all the original features and runs in standard (non extended) instruction set mode allowing the application code to be written with the nice Free SDCC compiler or with Microchip's own commercial XC8 compiler.
 
-Out-of-the box this project is usable with PIC18F4550 using 4 MHz crystal with Mac OS X and Microchip's MPLAB X and PICKit 2.
+Out-of-the box this project is usable with PIC18F45K50 with Mac OS X and Microchip's MPLAB X and PICKit 2.
+If you change the 'PROCESSOR' to '18f4550' in the Makefile it just-work with with PIC18F4550 using 4 MHz crystal.
 
 See building and porting for suggestions on how to build the bootloader with other compilers, under other operating systems or for other devices.
 
