@@ -343,6 +343,7 @@ usb_sm_ctrl_tx
 	cpfslt	Count
 	bra	usb_sm_ctrl_tx_size_end
 	movf	Count, W
+	bz		usb_sm_ctrl_tx_end
 usb_sm_ctrl_tx_size_end
 	movwf	byte_to_send
 	; Load the number of bytes to send to BC9..0 in buffer descriptor
