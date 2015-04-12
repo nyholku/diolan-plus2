@@ -223,10 +223,9 @@ usb_sm_ctrl_out_token
 usb_sm_ctrl_in_token
 	movlw	EP00_IN
 	cpfseq	USTAT
-	return
-	rcall	usb_sm_ctrl_in
 usb_sm_ctrl_end
 	return
+	bra		usb_sm_ctrl_in ; return to caller via 'usb_sm_ctrl_in'
 ;-----------------------------------------------------------------------------
 ; usb_sm_ctrl_out
 ; DESCR : EP0 OUT packet handler
@@ -731,8 +730,7 @@ usb_sm_ctrl_setup_end_run_c
 	; PKTDIS bit is set when a Setup Transaction is received.
 	; Clear to resume packet processing.
 	bcf	UCON, PKTDIS
-	btfsc	ctrl_trf_session_owner, 0
-	bra	usb_sm_ctrl_setup_end_null
+	btfss	ctrl_trf_session_owner, 0
 	; If no one knows how to service this request then stall.
 	bra	usb_stall_ep0	; Return to caller from usb_stall_ep0
 usb_sm_ctrl_setup_end_null
