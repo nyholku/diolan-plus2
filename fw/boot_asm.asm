@@ -391,9 +391,9 @@ get_fw_version
 ; OUTPUT: 
 ; NOTES : 
 ;-----------------------------------------------------------------------------
-#if USE_EEPROM_MARK
 ; Soft Reset and run bootloader FW
 bootloader_soft_reset
+#if USE_EEPROM_MARK
 	; Set EEPROM Mark
 	rcall	set_eep_mark
 	bra	soft_reset2
