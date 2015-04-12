@@ -61,7 +61,11 @@ USB_DEV_DESC_idVendor		dw	BOOTLOADER_VID
 USB_DEV_DESC_idProduct		dw	BOOTLOADER_PID
 USB_DEV_DESC_bcdDevice		dw	FW_VER_CODE ; Device release number
 USB_DEV_DESC_iMfg		db	0x01	; Manufacturer string index
+#if USE_PROD_STRING
 USB_DEV_DESC_iProduct		db	0x02	; Product string index
+#else
+USB_DEV_DESC_iProduct		db	0x00	; Product string index
+#end
 USB_DEV_DESC_iSerialNum		db	0x00	; No serial number
 USB_DEV_DESC_bNumCfg		db	0x01	; One configuration supported
 USB_DEV_DESC_end
