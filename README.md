@@ -8,7 +8,7 @@ And not just any old USB but USB HID meaning absolutely no drivers required on L
 
 Diolan-plus2 is the  Diolan bootloader modified, with all the original features intact,  to use the standard (non extended aka legacy) instructions set and still fit in the 2 kB bootblock.
 
-The code was originally ported to PIC18F450 and modified to use the standard instruction set in order to be compatible with the [SDCC](http://sdcc.sourceforge.net) compiler and to support my [EasyCNC Project](http://www.sparetimelabs.com/eazycnc/welcome/welcome.php).
+The code was originally ported to PIC18F4550 and modified to use the standard instruction set in order to be compatible with the [SDCC](http://sdcc.sourceforge.net) compiler and to support my [EasyCNC Project](http://www.sparetimelabs.com/eazycnc/welcome/welcome.php).
 
 It was originally created by the Israely company Diolan that gracefully licensed it under GPL 3.0 .
 
